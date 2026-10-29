@@ -1,0 +1,15 @@
+node_modules/
+vendor/
+.git/
+.github/
+tests/
+storage/logs/*.log
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+.env.example
+.editorconfig
+phpunit.xml
+*.md
+.kiro/
+.claude/
