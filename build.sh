@@ -1,23 +1,41 @@
 #!/usr/bin/env bash
-# exit on error
+# Exit on error
 set -o errexit
 
-# Install PHP dependencies
-composer install --no-dev --optimize-autoloader --no-interaction
+echo "🚀 Starting build process..."
 
-# Install Node dependencies
+# 1. Install PHP dependencies
+echo "📦 Installing Composer dependencies..."
+composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+
+# 2. Install Node dependencies
+echo "📦 Installing NPM dependencies..."
 npm ci --include=dev
 
-# Build assets
+# 3. Build frontend assets
+echo "🎨 Building frontend assets..."
 npm run build
 
-# Clear and cache config
+# Check if build succeeded
+if [ ! -d "public/build" ]; then
+  echo "❌ ERROR: Vite build failed! public/build directory not found."
+  exit 1
+fi
+
+echo "✅ Assets built successfully!"
+
+# 4. Clear old cache
+echo "🧹 Clearing old cache..."
 php artisan config:clear
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
+php artisan route:clear
+php artisan view:clear
 
-# Create storage link (if needed)
-php artisan storage:link || true
+# 5. Optimize for production
+echo "⚡ Optimizing for production..."
+php artisan optimize
 
-echo "Build completed successfully!"
+# 6. Optimize autoloader
+echo "🔧 Optimizing autoloader..."
+composer dump-autoload --optimize --classmap-authoritative
+
+echo "🎉 Build completed successfully!"
