@@ -23,7 +23,7 @@ if (appShell && menuButton && menuOverlay) {
         closeMenu();
         menuOverlay.setAttribute('aria-hidden', 'true');
     });
-    appShell.querySelectorAll('.side-nav a, .profile-link').forEach((link) => {
+    appShell.querySelectorAll('.sidebar-nav a, .sidebar-profile-link').forEach((link) => {
         link.addEventListener('click', () => {
             closeMenu();
             menuOverlay.setAttribute('aria-hidden', 'true');
