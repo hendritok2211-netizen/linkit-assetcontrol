@@ -16,49 +16,74 @@
             <div class="card-header">
                 <div>
                     <h3 class="card-title">Pindai QR / Barcode</h3>
-                    <p class="card-sub">Pilih foto dari galeri, ambil foto baru, atau gunakan kamera live.</p>
+                    <p class="card-sub">Gunakan kamera live atau pilih foto dari galeri.</p>
                 </div>
             </div>
 
             <div class="scan-wrap" data-qr-scanner>
-                {{-- Video feed (live camera) --}}
-                <video id="qr-video" class="scan-video" muted playsinline hidden></video>
 
-                {{-- Status message --}}
-                <div id="scanner-message" class="scan-message">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg>
-                    <span>Kamera belum dimulai.</span>
+                {{-- === KAMERA LIVE === --}}
+                <div class="scan-camera-section">
+                    <div class="scan-section-label">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+                        Kamera Live
+                        <span class="scan-https-badge" id="scan-https-badge" hidden>
+                            Memerlukan HTTPS / localhost
+                        </span>
+                    </div>
+
+                    {{-- Video preview --}}
+                    <div class="scan-video-container">
+                        <video id="qr-video" class="scan-video" muted playsinline hidden></video>
+                        <div class="scan-video-placeholder" id="scan-video-placeholder">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+                            <span>Klik "Mulai Kamera" untuk memulai</span>
+                        </div>
+                    </div>
+
+                    {{-- Camera controls --}}
+                    <div class="scan-camera-controls">
+                        <button class="button button-primary" id="scan-start" type="button">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                            Mulai Kamera
+                        </button>
+                        <button class="button button-outline" id="scan-stop" type="button" disabled>
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+                            Hentikan
+                        </button>
+                    </div>
+
+                    {{-- Status message --}}
+                    <div id="scanner-message" class="scan-message" data-state="idle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+                        <span>Klik "Mulai Kamera" untuk memindai secara live. Pastikan izin kamera sudah diberikan di browser.</span>
+                    </div>
                 </div>
 
-                {{-- Primary action: photo / gallery --}}
-                <div class="scan-actions">
-                    <button class="button button-primary" id="scan-photo" type="button">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-                        Ambil / Pilih Foto QR
+                {{-- === DIVIDER === --}}
+                <div class="scan-divider"><span>atau</span></div>
+
+                {{-- === FOTO / GALERI === --}}
+                <div class="scan-photo-section">
+                    <div class="scan-section-label">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                        Pilih / Ambil Foto
+                    </div>
+                    <button class="button button-outline scan-photo-btn" id="scan-photo" type="button">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        Pilih dari Galeri / Ambil Foto
                     </button>
-                    {{-- File input: tanpa capture agar tidak paksa kamera --}}
                     <input type="file" id="qr-file-input" accept="image/*" style="display:none;">
                 </div>
 
-                {{-- Live camera (collapsible) --}}
-                <details class="scan-live-toggle">
-                    <summary>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                        Kamera live (perlu HTTPS / localhost)
-                    </summary>
-                    <div class="scan-live-controls">
-                        <button class="button button-outline button-small" id="scan-start" type="button">▶ Mulai kamera</button>
-                        <button class="button button-outline button-small" id="scan-stop" type="button" disabled>■ Hentikan</button>
-                    </div>
-                </details>
             </div>
 
-            {{-- Manual input form --}}
+            {{-- Manual input --}}
             <form method="POST" action="{{ route('laptops.verify') }}" id="scan-form" class="scan-manual-form">
                 @csrf
                 <label class="scan-manual-label" for="asset-code-input">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                    Cari manual
+                    Cari Manual
                 </label>
                 <div class="scan-manual-row">
                     <input
@@ -66,10 +91,9 @@
                         type="text"
                         name="asset_code"
                         value="{{ old('asset_code', $searchedCode ?? '') }}"
-                        placeholder="Kode aset (misal LT-0001) atau nomor seri"
+                        placeholder="Kode aset (LT-0001) atau nomor seri"
                         required
                         autocomplete="off"
-                        autofocus
                     >
                     <button class="button button-dark" type="submit">Cari</button>
                 </div>
@@ -88,12 +112,11 @@
             <div class="scan-result-wrap">
                 @isset($searchedCode)
                     @if ($laptop)
-                        {{-- Found --}}
                         <div class="scan-found">
                             <div class="scan-found-header">
                                 <span class="badge badge-green">
                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-                                    Aset ditemukan
+                                    Aset Ditemukan
                                 </span>
                                 <div class="scan-found-title">
                                     <h3>{{ $laptop->asset_code }}</h3>
@@ -102,45 +125,30 @@
                             </div>
 
                             <dl class="scan-detail-grid">
-                                <dt>Nomor seri</dt>
-                                <dd>{{ $laptop->serial_number }}</dd>
-
-                                <dt>RAM</dt>
-                                <dd>{{ $laptop->ram ?? '—' }}</dd>
-
-                                <dt>Penyimpanan</dt>
-                                <dd>{{ $laptop->storage_capacity ?? '—' }}</dd>
-
+                                <dt>Nomor seri</dt><dd>{{ $laptop->serial_number }}</dd>
+                                <dt>RAM</dt><dd>{{ $laptop->ram ?? '—' }}</dd>
+                                <dt>Penyimpanan</dt><dd>{{ $laptop->storage_capacity ?? '—' }}</dd>
                                 <dt>Status</dt>
                                 <dd>
                                     <span class="badge {{ ['available' => 'badge-green', 'borrowed' => 'badge-blue', 'maintenance' => 'badge-amber', 'inactive' => 'badge-gray'][$laptop->status] ?? 'badge-gray' }}">
                                         {{ ['available' => 'Tersedia', 'borrowed' => 'Dipinjam', 'maintenance' => 'Perawatan', 'inactive' => 'Nonaktif'][$laptop->status] ?? $laptop->status }}
                                     </span>
                                 </dd>
-
                                 <dt>Kondisi</dt>
                                 <dd>
                                     <span class="condition-badge condition-{{ $laptop->condition }}">
                                         {{ ['good' => 'Baik', 'minor_damage' => 'Rusak ringan', 'damaged' => 'Rusak berat'][$laptop->condition] ?? $laptop->condition }}
                                     </span>
                                 </dd>
-
-                                <dt>Divisi</dt>
-                                <dd>{{ $laptop->division?->name ?? '—' }}</dd>
-
-                                <dt>Bagian / jabatan</dt>
-                                <dd>{{ $laptop->division_detail ?? '—' }}</dd>
-
-                                <dt>Pemegang</dt>
-                                <dd>{{ $laptop->activeLoan->first()?->user?->name ?? 'Tidak sedang dipinjam' }}</dd>
+                                <dt>Divisi</dt><dd>{{ $laptop->division?->name ?? '—' }}</dd>
+                                <dt>Bagian / jabatan</dt><dd>{{ $laptop->division_detail ?? '—' }}</dd>
+                                <dt>Pemegang</dt><dd>{{ $laptop->activeLoan->first()?->user?->name ?? 'Tidak sedang dipinjam' }}</dd>
                             </dl>
 
-                            {{-- Audit Form --}}
                             <form method="POST" action="{{ route('laptops.audit', $laptop) }}" class="audit-form-wrap">
                                 @csrf
                                 <div class="audit-form-grid">
-                                    <label>
-                                        Aksi aset
+                                    <label>Aksi aset
                                         <select name="action" id="asset-audit-action" required>
                                             <option value="inspect" @selected(old('action') === 'inspect')>Catat pemeriksaan</option>
                                             <option value="send_service"
@@ -161,8 +169,7 @@
                                         </select>
                                     </label>
 
-                                    <label>
-                                        Kondisi saat diperiksa
+                                    <label>Kondisi saat diperiksa
                                         <select name="condition" required>
                                             @foreach (['good' => 'Baik', 'minor_damage' => 'Rusak ringan', 'damaged' => 'Rusak berat'] as $key => $label)
                                                 <option value="{{ $key }}" @selected($laptop->condition === $key)>{{ $label }}</option>
@@ -177,12 +184,10 @@
                                         </label>
                                     @endif
 
-                                    <label class="full-span">
-                                        Catatan pemeriksaan
+                                    <label class="full-span">Catatan pemeriksaan
                                         <input type="text" name="notes" maxlength="2000" value="{{ old('notes') }}" placeholder="Catatan servis, pemeriksaan, atau pengembalian">
                                     </label>
                                 </div>
-
                                 <div class="audit-form-actions">
                                     <button class="button button-primary" type="submit">
                                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
@@ -198,14 +203,12 @@
                                         const returnSerialField = document.getElementById('return-serial-field');
                                         if (!auditAction || !returnSerialField) return;
                                         const returnSerialInput = returnSerialField.querySelector('input');
-
                                         function updateReturnFields() {
                                             const isReturn = auditAction.value === 'record_return';
                                             returnSerialField.hidden = !isReturn;
                                             returnSerialInput.required = isReturn;
                                             returnSerialInput.disabled = !isReturn;
                                         }
-
                                         auditAction.addEventListener('change', updateReturnFields);
                                         updateReturnFields();
                                     })();
@@ -214,7 +217,6 @@
                         </div>
 
                     @else
-                        {{-- Not found --}}
                         <div class="scan-not-found">
                             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/><path d="M8 11h6"/></svg>
                             <p>Kode <strong>{{ $searchedCode }}</strong> tidak ditemukan dalam inventaris.</p>
@@ -223,11 +225,10 @@
                     @endif
 
                 @else
-                    {{-- Idle state --}}
                     <div class="scan-idle">
                         <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg>
                         <p>Hasil pemindaian akan tampil di sini.</p>
-                        <p class="scan-hint">Pindai QR code atau masukkan kode aset / nomor seri secara manual.</p>
+                        <p class="scan-hint">Pindai QR code atau masukkan kode aset secara manual.</p>
                     </div>
                 @endisset
             </div>

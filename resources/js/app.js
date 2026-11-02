@@ -91,6 +91,8 @@ if (scanner) {
         controls?.stop();
         controls = undefined;
         video.hidden = true;
+        const placeholder = document.getElementById('scan-video-placeholder');
+        if (placeholder) placeholder.hidden = false;
         startButton.disabled = false;
         stopButton.disabled = true;
     };
@@ -208,32 +210,28 @@ if (scanner) {
     const isSecureContext = window.isSecureContext;
     const isLocalhost = ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
 
-    if (!isSecureContext && !isLocalhost) {
-        // Not secure at all — hide live camera option entirely
-        const liveToggle = scanner.closest('.scan-wrap')?.querySelector('.scan-live-toggle');
-        if (liveToggle) {
-            liveToggle.innerHTML = `<div class="scan-https-notice">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
-                Kamera live memerlukan HTTPS. Gunakan foto atau input manual.
-            </div>`;
-        }
-    } else if (isLocalhost && location.hostname === '127.0.0.1') {
-        // On 127.0.0.1 — suggest switching to localhost
-        const liveToggle = scanner.closest('.scan-wrap')?.querySelector('.scan-live-toggle');
-        const liveSummary = liveToggle?.querySelector('summary');
-        if (liveSummary) {
-            liveSummary.insertAdjacentHTML('afterend', `<div class="scan-localhost-tip">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
-                Jika kamera gagal, buka lewat
-                <a href="${location.href.replace('127.0.0.1', 'localhost')}" class="scan-localhost-link">localhost:${location.port}${location.pathname}</a>
-                — browser lebih mengizinkan kamera di <code>localhost</code>.
-            </div>`);
-        }
+    // Show HTTPS badge if not secure
+    const httpsBadge = document.getElementById('scan-https-badge');
+    if (!isSecureContext && httpsBadge) {
+        httpsBadge.hidden = false;
+    }
+
+    // If on 127.0.0.1, inject localhost tip into the message area
+    if (isLocalhost && location.hostname === '127.0.0.1') {
+        const localhostUrl = location.href.replace('127.0.0.1', 'localhost');
+        setMessage('idle',
+            `Kamera live lebih stabil di <a href="${localhostUrl}" class="scan-localhost-link">localhost:${location.port}${location.pathname}</a>. ` +
+            `Klik tombol "Mulai Kamera" untuk mencoba, atau buka via localhost jika gagal.`
+        );
     }
 
     startButton.addEventListener('click', async () => {
         startButton.disabled = true;
         setMessage('loading', 'Meminta izin kamera...');
+
+        // Show video, hide placeholder
+        const placeholder = document.getElementById('scan-video-placeholder');
+        if (placeholder) placeholder.hidden = true;
         video.hidden = false;
 
         try {
@@ -242,22 +240,25 @@ if (scanner) {
                 submitCode(result.getText());
             });
             stopButton.disabled = false;
-            setMessage('active', 'Arahkan kamera ke QR code atau barcode pada laptop.');
+            setMessage('active', 'Kamera aktif — arahkan ke QR code atau barcode laptop.');
         } catch (error) {
             video.hidden = true;
+            if (placeholder) placeholder.hidden = false;
             startButton.disabled = false;
 
             let hint = '';
             if (error.name === 'NotAllowedError') {
-                hint = 'Izin kamera ditolak. Klik ikon kunci 🔒 di address bar → Izinkan kamera, lalu muat ulang halaman.';
+                hint = 'Izin kamera ditolak. Klik ikon 🔒 di address bar → "Izin situs" → Izinkan Kamera → muat ulang halaman.';
             } else if (error.name === 'NotFoundError') {
-                hint = 'Tidak ada kamera yang terdeteksi di perangkat ini.';
+                hint = 'Tidak ada kamera yang terdeteksi. Pastikan kamera terhubung dan tidak dinonaktifkan.';
             } else if (error.name === 'NotReadableError') {
-                hint = 'Kamera sedang digunakan aplikasi lain. Tutup aplikasi kamera lain lalu coba lagi.';
+                hint = 'Kamera sedang dipakai aplikasi lain (Zoom, Teams, dll). Tutup dulu, lalu coba lagi.';
+            } else if (error.name === 'OverconstrainedError') {
+                hint = 'Kamera tidak mendukung konfigurasi yang diminta. Coba browser lain.';
             } else if (!isSecureContext) {
-                hint = 'Kamera live memerlukan HTTPS atau localhost. Gunakan fitur "Ambil / Pilih Foto QR" sebagai alternatif.';
+                hint = 'Kamera live memerlukan HTTPS atau localhost. Gunakan fitur foto sebagai alternatif.';
             } else {
-                hint = `Kamera tidak dapat digunakan: ${error.message || 'Periksa izin kamera di browser.'}`;
+                hint = `Kamera gagal: ${error.message || error.name || 'error tidak diketahui'}`;
             }
 
             setMessage('error', hint);
