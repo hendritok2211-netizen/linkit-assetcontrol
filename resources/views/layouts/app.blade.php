@@ -24,7 +24,7 @@
                         <a href="{{ route('reports.index') }}" class="{{ request()->routeIs('reports.*') ? 'active' : '' }}"><span>▤</span> Laporan</a>
                         <a href="{{ route('laptops.scan') }}" class="{{ request()->routeIs('laptops.scan') ? 'active' : '' }}"><span>▧</span> Verifikasi QR</a>
                         <a href="{{ route('employees.index') }}" class="{{ request()->routeIs('employees.*') ? 'active' : '' }}"><span>♙</span> Karyawan</a>
-                        <a href="{{ route('divisions.index') }}" class="{{ request()->routeIs('divisions.*') ? 'active' : '' }}"><span>▤</span> Divisi</a>
+                        <a href="{{ route('divisions.index') }}" class="{{ request()->routeIs('divisions.*') ? 'active' : '' }}"><span>▦</span> Peta Divisi</a>
                     @else
                         <a href="{{ route('loans.mine') }}" class="{{ request()->routeIs('loans.mine') ? 'active' : '' }}"><span>▣</span> Laptop Saya</a>
                     @endif
