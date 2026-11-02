@@ -27,7 +27,7 @@
             'details' => $division->sections ?? [],
         ])->values();
     @endphp
-    <div class="welcome-row"><div><h2>{{ $laptop->exists ? 'Perbarui informasi perangkat' : 'Daftarkan perangkat baru' }}</h2><p>Setiap perangkat memiliki kode aset, nomor seri, dan spesifikasi masing-masing.</p></div><a class="button button-outline" href="{{ route('laptops.index') }}">← Kembali</a></div>
+    <div class="page-header"><div><h2 class="page-header-title">{{ $laptop->exists ? 'Perbarui Informasi Perangkat' : 'Daftarkan Perangkat Baru' }}</h2><p class="page-header-sub">Setiap perangkat memiliki kode aset, nomor seri, dan spesifikasi masing-masing.</p></div><a class="button button-outline" href="{{ route('laptops.index') }}">← Kembali</a></div>
     <section class="panel form-panel">
         <form method="POST" action="{{ $laptop->exists ? route('laptops.update', $laptop) : route('laptops.store') }}">
             @csrf

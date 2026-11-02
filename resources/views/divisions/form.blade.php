@@ -7,10 +7,10 @@
         $initialSections = old('sections', $division->sections ?? []);
         $initialSections = is_array($initialSections) ? array_values($initialSections) : [];
     @endphp
-    <div class="welcome-row">
+    <div class="page-header">
         <div>
-            <h2>{{ $division->exists ? 'Perbarui divisi' : 'Tambahkan divisi baru' }}</h2>
-            <p>Tambahkan bagian atau jabatan agar bisa dipilih pada data laptop.</p>
+            <h2 class="page-header-title">{{ $division->exists ? 'Perbarui Divisi' : 'Tambah Divisi Baru' }}</h2>
+            <p class="page-header-sub">Tambahkan bagian atau jabatan agar bisa dipilih pada data laptop.</p>
         </div>
         <a class="button button-outline" href="{{ route('divisions.index') }}">← Kembali</a>
     </div>
