@@ -73,6 +73,20 @@ if (scanner) {
     ]));
     let controls;
 
+    const setMessage = (state, text) => {
+        const icons = {
+            idle:    `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg>`,
+            loading: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10" stroke-dasharray="32" stroke-dashoffset="10"/></svg>`,
+            active:  `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>`,
+            success: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>`,
+            error:   `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`,
+        };
+        message.dataset.state = state;
+        message.innerHTML = `${icons[state] ?? icons.idle}<span>${text}</span>`;
+    };
+
+    setMessage('idle', 'Kamera belum dimulai.');
+
     const stopCamera = () => {
         controls?.stop();
         controls = undefined;
@@ -164,12 +178,12 @@ if (scanner) {
         }
 
         if (file.type && !file.type.startsWith('image/')) {
-            message.textContent = 'Pilih file gambar untuk memindai QR code atau barcode.';
+            setMessage('error', 'Pilih file gambar untuk memindai QR code atau barcode.');
             return;
         }
 
         stopCamera();
-        message.textContent = 'Membaca QR code atau barcode dari gambar...';
+        setMessage('loading', 'Membaca QR code atau barcode dari gambar...');
         const imageUrl = URL.createObjectURL(file);
         const image = new Image();
         let imageLoaded = false;
@@ -181,34 +195,72 @@ if (scanner) {
             const result = await decodePhoto(image);
             submitCode(result.getText());
         } catch (error) {
-            message.textContent = imageLoaded
-                ? 'Kode tidak terbaca. Letakkan barcode memenuhi bagian tengah foto, pastikan fokus dan tidak silau. Coba foto lain atau masukkan kode/nomor seri manual.'
-                : `Browser tidak dapat membuka foto${file.type ? ` (${file.type})` : ''}. Pilih JPG/PNG atau ubah format foto kamera ke kompatibel.`;
+            setMessage('error', imageLoaded
+                ? 'Kode tidak terbaca. Pastikan QR/barcode terlihat jelas dan tidak buram. Coba foto lain atau masukkan kode manual.'
+                : `Browser tidak dapat membuka foto${file.type ? ` (${file.type})` : ''}. Pilih JPG/PNG.`);
             console.warn('Pemindaian gambar gagal:', error);
         } finally {
             URL.revokeObjectURL(imageUrl);
         }
     };
 
+    // Detect if running on a secure context (HTTPS or localhost)
+    const isSecureContext = window.isSecureContext;
+    const isLocalhost = ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
+
+    if (!isSecureContext && !isLocalhost) {
+        // Not secure at all — hide live camera option entirely
+        const liveToggle = scanner.closest('.scan-wrap')?.querySelector('.scan-live-toggle');
+        if (liveToggle) {
+            liveToggle.innerHTML = `<div class="scan-https-notice">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+                Kamera live memerlukan HTTPS. Gunakan foto atau input manual.
+            </div>`;
+        }
+    } else if (isLocalhost && location.hostname === '127.0.0.1') {
+        // On 127.0.0.1 — suggest switching to localhost
+        const liveToggle = scanner.closest('.scan-wrap')?.querySelector('.scan-live-toggle');
+        const liveSummary = liveToggle?.querySelector('summary');
+        if (liveSummary) {
+            liveSummary.insertAdjacentHTML('afterend', `<div class="scan-localhost-tip">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+                Jika kamera gagal, buka lewat
+                <a href="${location.href.replace('127.0.0.1', 'localhost')}" class="scan-localhost-link">localhost:${location.port}${location.pathname}</a>
+                — browser lebih mengizinkan kamera di <code>localhost</code>.
+            </div>`);
+        }
+    }
+
     startButton.addEventListener('click', async () => {
         startButton.disabled = true;
-        message.textContent = 'Meminta izin kamera...';
+        setMessage('loading', 'Meminta izin kamera...');
         video.hidden = false;
 
         try {
             controls = await reader.decodeFromVideoDevice(undefined, video, (result) => {
-                if (!result) {
-                    return;
-                }
-
+                if (!result) { return; }
                 submitCode(result.getText());
             });
             stopButton.disabled = false;
-            message.textContent = 'Arahkan kamera ke QR code atau barcode pada laptop.';
+            setMessage('active', 'Arahkan kamera ke QR code atau barcode pada laptop.');
         } catch (error) {
             video.hidden = true;
             startButton.disabled = false;
-            message.textContent = `Kamera tidak dapat digunakan: ${error.message || 'periksa izin kamera atau gunakan input manual.'}`;
+
+            let hint = '';
+            if (error.name === 'NotAllowedError') {
+                hint = 'Izin kamera ditolak. Klik ikon kunci 🔒 di address bar → Izinkan kamera, lalu muat ulang halaman.';
+            } else if (error.name === 'NotFoundError') {
+                hint = 'Tidak ada kamera yang terdeteksi di perangkat ini.';
+            } else if (error.name === 'NotReadableError') {
+                hint = 'Kamera sedang digunakan aplikasi lain. Tutup aplikasi kamera lain lalu coba lagi.';
+            } else if (!isSecureContext) {
+                hint = 'Kamera live memerlukan HTTPS atau localhost. Gunakan fitur "Ambil / Pilih Foto QR" sebagai alternatif.';
+            } else {
+                hint = `Kamera tidak dapat digunakan: ${error.message || 'Periksa izin kamera di browser.'}`;
+            }
+
+            setMessage('error', hint);
         }
     });
 
@@ -217,6 +269,6 @@ if (scanner) {
 
     stopButton.addEventListener('click', () => {
         stopCamera();
-        message.textContent = 'Pemindaian dihentikan.';
+        setMessage('idle', 'Pemindaian dihentikan.');
     });
 }

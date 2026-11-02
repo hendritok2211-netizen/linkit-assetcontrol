@@ -506,9 +506,33 @@ input::placeholder { color: var(--ink-3); }
     display: flex; align-items: center; gap: 10px;
     padding: 12px 14px;
     background: #f8fafc; border: 1px solid var(--line); border-radius: var(--radius-sm);
-    color: var(--ink-2); font-size: 13px;
+    color: var(--ink-2); font-size: 13px; line-height: 1.5;
 }
 .scan-message svg { flex: none; color: var(--ink-3); }
+.scan-message[data-state="error"]   { background: var(--danger-soft); border-color: #fecaca; color: #b91c1c; }
+.scan-message[data-state="error"] svg { color: #b91c1c; }
+.scan-message[data-state="success"] { background: var(--success-soft); border-color: #bbf7d0; color: #15803d; }
+.scan-message[data-state="success"] svg { color: #15803d; }
+.scan-message[data-state="active"]  { background: #eff6ff; border-color: #bfdbfe; color: #1d4ed8; }
+.scan-message[data-state="active"] svg { color: #1d4ed8; }
+.scan-message[data-state="loading"] { background: #f0fdf4; border-color: #bbf7d0; color: #15803d; }
+
+.scan-https-notice {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 14px;
+    background: #fffbeb; color: #a16207;
+    font-size: 12px;
+}
+.scan-localhost-tip {
+    display: flex; align-items: center; flex-wrap: wrap; gap: 5px;
+    padding: 8px 14px 12px;
+    background: #fffbeb; color: #92400e;
+    font-size: 12px; line-height: 1.5;
+}
+.scan-localhost-tip svg { flex: none; color: #d97706; }
+.scan-localhost-link { color: var(--brand); font-weight: 700; text-decoration: underline; }
+.scan-localhost-link:hover { color: var(--brand-dark); }
+.scan-localhost-tip code { background: #fef3c7; padding: 0 4px; border-radius: 3px; font-size: 11px; }
 
 .scan-actions { display: flex; flex-wrap: wrap; gap: 10px; }
 
