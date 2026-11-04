@@ -77,6 +77,82 @@
         </div>
     @endif
 
+    {{-- Peta Organisasi Divisi --}}
+    <section class="card">
+        <div class="card-header">
+            <div>
+                <h3 class="card-title">Peta Organisasi Divisi</h3>
+                <p class="card-sub">Struktur divisi dan sebaran aset perusahaan</p>
+            </div>
+            <a class="text-link" href="{{ route('divisions.index') }}">Kelola →</a>
+        </div>
+        <div class="org-map-container">
+            <div class="org-map-scroll">
+                @forelse ($divisions as $division)
+                    <article class="org-division-card">
+                        <div class="org-division-header">
+                            <div class="org-division-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="3" width="7" height="7"/>
+                                    <rect x="14" y="3" width="7" height="7"/>
+                                    <rect x="14" y="14" width="7" height="7"/>
+                                    <rect x="3" y="14" width="7" height="7"/>
+                                </svg>
+                            </div>
+                            <div class="org-division-title">
+                                <h4>{{ $division->name }}</h4>
+                                @if ($division->description)
+                                    <p>{{ Str::limit($division->description, 60) }}</p>
+                                @endif
+                            </div>
+                        </div>
+                        
+                        <div class="org-division-stats">
+                            <div class="org-stat">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="9" cy="7" r="4"/>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                                </svg>
+                                <span>{{ $division->users_count }} Karyawan</span>
+                            </div>
+                            <div class="org-stat">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="2" y="3" width="20" height="14" rx="2"/>
+                                    <path d="M8 21h8M12 17v4"/>
+                                </svg>
+                                <span>{{ $division->laptops_count }} Laptop</span>
+                            </div>
+                        </div>
+
+                        @if ($division->sections && count($division->sections) > 0)
+                            <div class="org-sections">
+                                <span class="org-sections-label">Seksi:</span>
+                                <div class="org-sections-list">
+                                    @foreach ($division->sections as $section)
+                                        <span class="org-section-badge">{{ $section }}</span>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+                    </article>
+                @empty
+                    <div class="org-empty">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <rect x="3" y="3" width="7" height="7"/>
+                            <rect x="14" y="3" width="7" height="7"/>
+                            <rect x="14" y="14" width="7" height="7"/>
+                            <rect x="3" y="14" width="7" height="7"/>
+                        </svg>
+                        <p>Belum ada divisi terdaftar</p>
+                        <a href="{{ route('divisions.create') }}" class="button button-primary button-sm">＋ Tambah Divisi</a>
+                    </div>
+                @endforelse
+            </div>
+        </div>
+    </section>
+
     {{-- Bottom Grid --}}
     <div class="dash-grid">
         {{-- Status Chart --}}

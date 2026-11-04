@@ -151,7 +151,7 @@ class LaptopController extends Controller
         ])['quantity'];
         $rules = [
             'units' => ['required', 'array', 'size:'.$quantity],
-            'units.*' => ['required', 'array:asset_code,serial_number,brand,model,ram,storage_capacity,purchase_date,division_id,division_detail,condition,status,notes'],
+            'units.*' => ['required', 'array:asset_code,serial_number,brand,model,ram,storage_capacity,purchase_date,price,division_id,division_detail,condition,status,notes'],
         ];
         $messages = [
             'units.required' => 'Isi data untuk setiap perangkat.',
@@ -185,6 +185,7 @@ class LaptopController extends Controller
             $rules[$prefix.'ram'] = ['required', Rule::in(Laptop::RAM_OPTIONS)];
             $rules[$prefix.'storage_capacity'] = ['required', Rule::in(Laptop::STORAGE_OPTIONS)];
             $rules[$prefix.'purchase_date'] = ['nullable', 'date'];
+            $rules[$prefix.'price'] = ['nullable', 'numeric', 'min:0', 'max:999999999999.99'];
             $rules[$prefix.'division_id'] = ['nullable', 'exists:divisions,id'];
             $rules[$prefix.'division_detail'] = ['nullable', 'string', 'max:255'];
             $rules[$prefix.'condition'] = ['required', Rule::in(['good', 'minor_damage', 'damaged'])];

@@ -6,6 +6,7 @@ use App\Http\Controllers\DivisionController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LaptopController;
 use App\Http\Controllers\LoanController;
+use App\Http\Controllers\PhoneController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
@@ -39,6 +40,15 @@ Route::middleware('auth')->group(function (): void {
         Route::get('/scan', [LaptopController::class, 'scan'])->name('laptops.scan');
         Route::post('/scan', [LaptopController::class, 'verify'])->name('laptops.verify');
         Route::post('/laptops/{laptop}/audit', [LaptopController::class, 'audit'])->name('laptops.audit');
+
+        Route::get('/phones', [PhoneController::class, 'index'])->name('phones.index');
+        Route::get('/phones/create', [PhoneController::class, 'create'])->name('phones.create');
+        Route::post('/phones', [PhoneController::class, 'store'])->name('phones.store');
+        Route::get('/phones/{phone}/edit', [PhoneController::class, 'edit'])->name('phones.edit');
+        Route::put('/phones/{phone}', [PhoneController::class, 'update'])->name('phones.update');
+        Route::delete('/phones/{phone}', [PhoneController::class, 'destroy'])->name('phones.destroy');
+        Route::get('/phones/{phone}/label', [PhoneController::class, 'label'])->name('phones.label');
+        Route::get('/phones/{phone}/qr', [PhoneController::class, 'qr'])->name('phones.qr');
 
         Route::get('/loans', [LoanController::class, 'index'])->name('loans.index');
         Route::post('/loans', [LoanController::class, 'issue'])->name('loans.issue');

@@ -45,6 +45,7 @@
                         <th>PERANGKAT / DIVISI</th>
                         <th>SPESIFIKASI</th>
                         <th>NOMOR SERI</th>
+                        <th>HARGA</th>
                         <th>PEMEGANG</th>
                         <th>TGL PINJAM</th>
                         <th>TGL BELI</th>
@@ -64,6 +65,13 @@
                             </td>
                             <td>{{ $laptop->ram ?? '—' }} / {{ $laptop->storage_capacity ?? '—' }}</td>
                             <td>{{ $laptop->serial_number }}</td>
+                            <td>
+                                @if ($laptop->price)
+                                    <strong>Rp {{ number_format($laptop->price, 0, ',', '.') }}</strong>
+                                @else
+                                    <span class="muted">—</span>
+                                @endif
+                            </td>
                             <td>{{ $loan?->user?->name ?? '—' }}</td>
                             <td>{{ $loan?->checked_out_at?->format('d M Y') ?? '—' }}</td>
                             <td>{{ $laptop->purchase_date?->format('d M Y') ?? '—' }}</td>
@@ -80,7 +88,7 @@
                             <td>{{ ['active' => 'Dipinjam', 'return_requested' => 'Menunggu kembali'][$loan?->status] ?? '—' }}</td>
                         </tr>
                     @empty
-                        <tr><td colspan="10" class="empty-state">Tidak ada aset yang cocok dengan filter.</td></tr>
+                        <tr><td colspan="11" class="empty-state">Tidak ada aset yang cocok dengan filter.</td></tr>
                     @endforelse
                 </tbody>
             </table>

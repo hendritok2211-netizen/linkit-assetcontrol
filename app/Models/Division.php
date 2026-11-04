@@ -30,4 +30,9 @@ class Division extends Model
     {
         return $this->hasMany(Laptop::class);
     }
+
+    public function phones(): HasMany
+    {
+        return $this->hasMany(Phone::class);
+    }
 }

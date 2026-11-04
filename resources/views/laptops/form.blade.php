@@ -14,6 +14,7 @@
                 'ram' => $laptop->ram,
                 'storage_capacity' => $laptop->storage_capacity,
                 'purchase_date' => $laptop->purchase_date?->format('Y-m-d'),
+                'price' => $laptop->price,
                 'division_id' => $laptop->division_id,
                 'division_detail' => $laptop->division_detail,
                 'condition' => $laptop->condition,
@@ -68,6 +69,7 @@
                             </div>
                         </fieldset>
                         <label>Tanggal pembelian<input type="date" name="units[__INDEX__][purchase_date]"></label>
+                        <label>Harga pembelian (Rp)<input type="number" name="units[__INDEX__][price]" min="0" step="0.01" placeholder="0"></label>
                         <label>Divisi<select name="units[__INDEX__][division_id]"><option value="">Belum ditentukan</option>@foreach ($divisions as $division)<option value="{{ $division->id }}">{{ $division->name }}</option>@endforeach</select></label>
                         <label>Bagian / jabatan<select name="units[__INDEX__][division_detail]" disabled><option value="">Pilih divisi terlebih dahulu</option></select></label>
                         <label>Kondisi<select name="units[__INDEX__][condition]" required>@foreach (['good' => 'Baik', 'minor_damage' => 'Rusak ringan', 'damaged' => 'Rusak berat'] as $key => $label)<option value="{{ $key }}">{{ $label }}</option>@endforeach</select></label>

@@ -812,3 +812,41 @@ input::placeholder { color: var(--ink-3); }
     .asset-label { margin: 15mm auto; border: 1px solid #aaa; }
     .print-actions { display: none; }
 }
+
+/* ==========================================
+   ORG MAP - DASHBOARD EMBED VERSION
+   ========================================== */
+.org-map-container { padding: 20px 24px; }
+.org-map-scroll { display: flex; gap: 16px; overflow-x: auto; overflow-y: visible; padding-bottom: 12px; -webkit-overflow-scrolling: touch; }
+.org-map-scroll::-webkit-scrollbar { height: 8px; }
+.org-map-scroll::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+.org-map-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+.org-map-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+.org-division-card { display: flex; flex-direction: column; min-width: 260px; max-width: 280px; padding: 18px; border: 2px solid #e2e8f0; border-radius: var(--radius); background: #fff; transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
+.org-division-card:hover { transform: translateY(-2px); border-color: #cbd5e1; box-shadow: var(--shadow); }
+
+.org-division-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px; padding-bottom: 14px; border-bottom: 1px solid #f1f5f9; }
+.org-division-icon { display: grid; width: 44px; height: 44px; flex: none; place-items: center; border-radius: 10px; background: linear-gradient(135deg, var(--brand-soft) 0%, #e0eaf5 100%); color: var(--brand); }
+.org-division-title { min-width: 0; flex: 1; }
+.org-division-title h4 { margin: 0 0 4px; color: var(--ink); font-size: 15px; font-weight: 700; letter-spacing: -.01em; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.org-division-title p { margin: 0; color: var(--ink-3); font-size: 11px; line-height: 1.4; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+
+.org-division-stats { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+.org-stat { display: flex; align-items: center; gap: 8px; color: var(--ink-2); font-size: 12px; font-weight: 500; }
+.org-stat svg { flex: none; color: var(--ink-3); }
+
+.org-sections { display: flex; flex-direction: column; gap: 8px; padding-top: 14px; border-top: 1px solid #f1f5f9; }
+.org-sections-label { color: var(--ink-3); font-size: 10px; font-weight: 700; letter-spacing: .08em; }
+.org-sections-list { display: flex; flex-wrap: wrap; gap: 6px; }
+.org-section-badge { display: inline-flex; align-items: center; padding: 4px 9px; border: 1px solid #e2e8f0; border-radius: var(--radius-sm); background: #fafafa; color: var(--ink-2); font-size: 10px; font-weight: 500; transition: background .15s ease; }
+.org-section-badge:hover { background: #fff; }
+
+.org-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; min-height: 200px; padding: 40px 20px; text-align: center; }
+.org-empty svg { color: #cbd5e1; }
+.org-empty p { margin: 0; color: var(--ink-3); font-size: 13px; }
+
+@media (max-width: 768px) {
+    .org-map-container { padding: 16px; }
+    .org-division-card { min-width: 240px; }
+}

@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['asset_code', 'serial_number', 'brand', 'model', 'ram', 'storage_capacity', 'purchase_date', 'division_id', 'division_detail', 'status', 'condition', 'notes'])]
+#[Fillable(['asset_code', 'serial_number', 'brand', 'model', 'ram', 'storage_capacity', 'purchase_date', 'price', 'division_id', 'division_detail', 'status', 'condition', 'notes'])]
 class Laptop extends Model
 {
     public const RAM_OPTIONS = ['4 GB', '8 GB', '16 GB', '24 GB', '32 GB', '64 GB'];

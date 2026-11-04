@@ -44,6 +44,7 @@
                         <th>ASET</th>
                         <th>PEMEGANG</th>
                         <th>DIVISI</th>
+                        <th>HARGA</th>
                         <th>KONDISI</th>
                         <th>STATUS</th>
                         <th>AKSI</th>
@@ -62,6 +63,13 @@
                                 {{ $laptop->division?->name ?? '—' }}
                                 @if ($laptop->division_detail)
                                     <small>{{ $laptop->division_detail }}</small>
+                                @endif
+                            </td>
+                            <td>
+                                @if ($laptop->price)
+                                    <strong>Rp {{ number_format($laptop->price, 0, ',', '.') }}</strong>
+                                @else
+                                    <span class="muted">—</span>
                                 @endif
                             </td>
                             <td>
@@ -87,7 +95,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="6" class="empty-state">Belum ada data laptop yang cocok dengan pencarian.</td></tr>
+                        <tr><td colspan="7" class="empty-state">Belum ada data laptop yang cocok dengan pencarian.</td></tr>
                     @endforelse
                 </tbody>
             </table>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ActivityLog;
+use App\Models\Division;
 use App\Models\Laptop;
 use App\Models\Loan;
 use App\Models\User;
@@ -33,6 +34,7 @@ class DashboardController extends Controller
             'pendingReturns' => Loan::query()->where('status', 'return_requested')->count(),
             'recentLoans' => $loans->limit(6)->get(),
             'recentActivity' => ActivityLog::query()->with('user')->latest()->limit(8)->get(),
+            'divisions' => Division::query()->withCount(['users', 'laptops'])->get(),
         ]);
     }
 }
